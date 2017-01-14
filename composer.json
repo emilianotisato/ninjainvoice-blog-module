@@ -1,0 +1,16 @@
+{
+    "name": "invoiceninja/blog",
+    "type": "invoiceninja-module",
+    "description": "Simple blog tool for ninja invoice",
+    "authors": [
+        {
+            "name": "Emiliano Tisato",
+            "email": "info@thormaweb.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Modules\\Blog\\": ""
+        }
+    }
+}
