@@ -12,23 +12,32 @@ class CreateBlogTable extends Migration
      */
     public function up()
     {
-        Schema::create(strtolower('blog'), function (Blueprint $table) {
+        Schema::create('posts', function (Blueprint $table) {
             $table->increments('id');
-            $table->unsignedInteger('user_id')->index();
-            $table->unsignedInteger('account_id')->index();
-            $table->unsignedInteger('client_id')->index()->nullable();
+            $table->string('title')->unique();
+            $table->longText('body');
+            $table->string('slug')->unique();
+            $table->boolean('active');
+            $table->string('image')->nullable();
 
 
             $table->timestamps();
             $table->softDeletes();
             $table->boolean('is_deleted')->default(false);
+        });
 
-            $table->foreign('account_id')->references('id')->on('accounts')->onDelete('cascade');
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('client_id')->references('id')->on('clients')->onDelete('cascade');
+        Schema::create('post_tags', function(Blueprint $table) {
+            $table->increments('id');
+            $table->string('slug');
+            $table->string('name');
+        });
 
-            $table->unsignedInteger('public_id')->index();
-            $table->unique( ['account_id', 'public_id'] );
+        Schema::create('posts_tags', function(Blueprint $table) {
+            $table->integer('post_id')->unsigned();
+            $table->integer('tag_id')->unsigned();
+            $table->foreign('post_id')->references('id')->on('posts')->onDelete('cascade');
+            $table->foreign('tag_id')->references('id')->on('post_tags')->onDelete('cascade');
+            $table->primary(['post_id', 'tag_id']);
         });
     }
 
@@ -39,6 +48,8 @@ class CreateBlogTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists(strtolower('blog'));
+        Schema::dropIfExists('posts_tags');
+        Schema::dropIfExists('post_tags');
+        Schema::dropIfExists('posts');
     }
 }
